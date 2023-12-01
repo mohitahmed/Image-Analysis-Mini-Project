@@ -2,8 +2,8 @@ data = importdata('Train/labels.txt');
 img_nrs = data(:,1);
 true_labels = data(:,(2:4));
 
-train = 1100;
-test = 100;
+train = 1000;
+test = 200;
 train_labels = {};
 test_labels = {};
 
@@ -33,9 +33,9 @@ for i=1:train
 
 end
 
-fprintf('Extracting Validation Digits...\n');
+fprintf('Extracting Testing Digits...\n');
 
-% VALIDATION
+% test
 for i=1:test
     if i+train < 10
         a = extractDigits1(imread(strcat(strcat('Train/captcha_000',num2str(i+train)),'.png'))); 
