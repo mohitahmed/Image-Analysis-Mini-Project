@@ -1,7 +1,7 @@
 tic
 data = importdata('Train/labels.txt');
 img_nrs = data(:,1);
-true_labels = data((1000:1200),(2:4));
+true_labels = data(:,(2:4));
 
 my_labels = [];
 N = size(img_nrs);
@@ -11,10 +11,10 @@ N = size(img_nrs);
 % x = myclassifier(im);
 % x = true_labels(:,1);
 % y = 1;
-for n = 1000:N
-    %k = img_nrs(n);
-    sprintf('Train/captcha_%04d.png', n)
-    im = imread(sprintf('Train/captcha_%04d.png', n));
+for n = 1:N
+    k = img_nrs(n);
+    sprintf('Train/captcha_%04d.png', k)
+    im = imread(sprintf('Train/captcha_%04d.png', k));
     my_labels(end+1,:) = myclassifier(im);
 end
 
