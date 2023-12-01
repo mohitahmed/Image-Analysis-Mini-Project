@@ -1,6 +1,6 @@
 function a=extractDigits(I)
     a = [];
-    % I = imread("Train\captcha_1100.png");
+    % I = imread("Train\captcha_1004.png");
     I_gray = rgb2gray(I);
     % imshow(I_gray)
     % title("Grayscale image")
@@ -75,16 +75,16 @@ function a=extractDigits(I)
         I1 = imcrop(props(1).Image,[0 0 split h]);
         I2 = imcrop(props(1).Image,[split 0 split h]);
         I3 = imcrop(props(1).Image,[split*2 0 split h]);
-        a(1,:) = ShapeFeats(I1);
-        a(2,:) = ShapeFeats(I2);
-        a(3,:) = ShapeFeats(I3);
+        a(1,:) = FeatureExtraction(I1);
+        a(2,:) = FeatureExtraction(I2);
+        a(3,:) = FeatureExtraction(I3);
         % figure;
         % subplot(1,3,1);
-        % imshow(d1);
+        % imshow(I1);
         % subplot(1,3,2);
-        % imshow(d2);
+        % imshow(I2);
         % subplot(1,3,3);
-        % imshow(d3);
+        % imshow(I3);
        
     elseif count.NumObjects == 2
         [h1,w1] = size(props(1).Image);
@@ -100,22 +100,22 @@ function a=extractDigits(I)
             I3 = imcrop(props(2).Image,[round(w2/2) 0 round(w2/2) h2]);
             
         end
-        a(1,:) = ShapeFeats(I1);
-        a(2,:) = ShapeFeats(I2);
-        a(3,:) = ShapeFeats(I3);
+        a(1,:) = FeatureExtraction(I1);
+        a(2,:) = FeatureExtraction(I2);
+        a(3,:) = FeatureExtraction(I3);
         
         % figure;
         % subplot(1,3,1);
-        % imshow(d1);
+        % imshow(I1);
         % subplot(1,3,2);
-        % imshow(d2);
+        % imshow(I2);
         % subplot(1,3,3);
-        % imshow(d3);
+        % imshow(I3);
 
     elseif count.NumObjects == 3
-        a(1,:) = ShapeFeats(props(1).Image);
-        a(2,:) = ShapeFeats(props(2).Image);
-        a(3,:) = ShapeFeats(props(3).Image);
+        a(1,:) = FeatureExtraction(props(1).Image);
+        a(2,:) = FeatureExtraction(props(2).Image);
+        a(3,:) = FeatureExtraction(props(3).Image);
         % figure;
         % subplot(1,3,1);
         % imshow(props(1).Image);
@@ -124,9 +124,9 @@ function a=extractDigits(I)
         % subplot(1,3,3);
         % imshow(props(3).Image);
    elseif count.NumObjects == 4 %some captchas detect 4 digits. can be skipped
-        a(1,:) = ShapeFeats(props(1).Image);
-        a(2,:) = ShapeFeats(props(2).Image);
-        a(3,:) = ShapeFeats(props(3).Image);
+        a(1,:) = FeatureExtraction(props(1).Image);
+        a(2,:) = FeatureExtraction(props(2).Image);
+        a(3,:) = FeatureExtraction(props(3).Image);
 
         % figure;
         % subplot(1,4,1);
@@ -146,10 +146,10 @@ function a=extractDigits(I)
 	% F=[Ft(idx,:).Variables]; % Only using the one region with largest Area
 end
 
-function F=ShapeFeats(S)
-	fts={'Area','Perimeter'}; % List of features we wish to compute
-
-	Ft=regionprops('Table',S,fts{:}); % Extract the features from a BW image (e.g., from imbinarize(...))
-	[~,idx]=max(Ft.Area); % Region with largest Area
-	F=[Ft(idx,:).Variables]; % Only using the one region with largest Area
-end
+% function F=ShapeFeats(S)
+% 	fts={'Area','Perimeter'}; % List of features we wish to compute
+% 
+% 	Ft=regionprops('Table',S,fts{:}); % Extract the features from a BW image (e.g., from imbinarize(...))
+% 	[~,idx]=max(Ft.Area); % Region with largest Area
+% 	F=[Ft(idx,:).Variables]; % Only using the one region with largest Area
+% end

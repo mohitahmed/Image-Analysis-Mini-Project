@@ -54,28 +54,18 @@ for i=1:test
 
 
 end
-dist=pdist2(test_patterns,train_patterns); %Pairwise distance from each validation pattern to all training patterns
-y = categorical(transpose(train_labels));
-x = categorical(transpose(test_labels));
-%Then find the k Smallest distances, and vote on the correct class
+
+% KNN 
 k=3;
-[dst,knn]=mink(dist,k,2); %k nearest neighbours and their distances
-votes=train_labels(knn); %votes from the nearest neighbours
+Model = fitcknn(double(train_patterns),train_labels, 'NumNeighbors',k, 'BreakTies','nearest');
+save Model;
 
-C=categories(y); %Class names
-clear validation_pred;
-for i=1:size(dst,1) %for each test sample
-   count=accumarray(double(y(knn(i,:))),1,size(C)); %Count votes
-	[s,v]=maxk(count,2); %get the two most voted classes
-	if (s(1)==s(2)) %if equal vote count
-		validation_pred(i,1)=votes(i,1); %select the nearest class
-	else
-		validation_pred(i,1)=C(v(1)); %otherwise the most voted
-	end
-end
-
-
-
+fprintf('\nResubstitution error: %5.2f%%\n\n',100*resubLoss(Model));
+fprintf('Predicting validation set...\n');
+t=tic;
+validation_pred = predict(Model,test_patterns);
+toc(t);
+x = categorical(transpose(test_labels));
 
 accuracy = mean(validation_pred == x);
 fprintf('Validation accuracy: %5.2f%%\n',accuracy*100);
@@ -84,6 +74,57 @@ f=figure(2);
 if (f.Position(3)<800)
 	set(f,'Position',get(f,'Position').*[1,1,1.5,1.5]); %Enlarge figure
 end
-confusionchart(transpose(test_labels), validation_pred, 'ColumnSummary','column-normalized', 'RowSummary','row-normalized');
+confusionchart(test_labels, validation_pred, 'ColumnSummary','column-normalized', 'RowSummary','row-normalized');
 title(sprintf('Validation accuracy: %5.2f%%\n',accuracy*100));
+
+% wat = []
+% IM = imread("Mini Project\Intro2IA_Mini_Project_complete\mini_project\Train\captcha_1001.png");
+% imshow(IM);
+% a = extractDigits1(IM);
+%     for j=1:3
+%             wat(end+1,:) = a(j,:);
+%             %the{end+1} = num2str(true_labels(i+train,j));
+%     end
+% 
+% w = predict(Model,wat)
+
+
+
+
+
+
+
+
+% dist=pdist2(test_patterns,train_patterns); %Pairwise distance from each validation pattern to all training patterns
+% y = categorical(transpose(train_labels));
+
+% %Then find the k Smallest distances, and vote on the correct class
+% k=3;
+% [dst,knn]=mink(dist,k,2); %k nearest neighbours and their distances
+% votes=train_labels(knn); %votes from the nearest neighbours
+% 
+% C=categories(y); %Class names
+% clear validation_pred;
+% for i=1:size(dst,1) %for each test sample
+%    count=accumarray(double(y(knn(i,:))),1,size(C)); %Count votes
+% 	[s,v]=maxk(count,2); %get the two most voted classes
+% 	if (s(1)==s(2)) %if equal vote count
+% 		validation_pred(i,1)=votes(i,1); %select the nearest class
+% 	else
+% 		validation_pred(i,1)=C(v(1)); %otherwise the most voted
+% 	end
+% end
+% 
+% 
+% 
+% 
+% accuracy = mean(validation_pred == x);
+% fprintf('Validation accuracy: %5.2f%%\n',accuracy*100);
+% 
+% f=figure(2);
+% if (f.Position(3)<800)
+% 	set(f,'Position',get(f,'Position').*[1,1,1.5,1.5]); %Enlarge figure
+% end
+% confusionchart(transpose(test_labels), validation_pred, 'ColumnSummary','column-normalized', 'RowSummary','row-normalized');
+% title(sprintf('Validation accuracy: %5.2f%%\n',accuracy*100));
 
