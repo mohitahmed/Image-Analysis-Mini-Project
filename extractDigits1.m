@@ -1,17 +1,13 @@
-function a=extractDigits(I)
+function a=extractDigits1(I)
     a = [];
-    % I = imread("Train\captcha_1100.png");
     I_gray = rgb2gray(I);
-    % imshow(I_gray)
-    % title("Grayscale image")
+
     
     %Fourier transform
     fft = fft2(double(I_gray));
     fftshifted = fftshift(fft);
     
     magnitude = log(abs(fftshifted) + 1);
-    % imshow(magnitude, []);
-    % title("Magnitude")
     
     size_image = size(magnitude);
     
@@ -28,43 +24,29 @@ function a=extractDigits(I)
     end 
     
     magnitude = log(abs(fftshifted) + 1);
-    % imshow(magnitude, []);
-    % title("Result Magnitude")
     
     ifftshifted = ifftshift(fftshifted);
     res = uint8(ifft2(ifftshifted));
-    % imshow(res);
-    % title("Result Fourier transform");
 
     res = imgaussfilt(res,3);
 
     %Binarization
     I_binary = imbinarize(res);
-    % imshow(I_binary);
-    % title("Binarization")
     I_binary = ~I_binary;
     
     
     %Erosion
     se = strel("diamond",4);
     I_eroded = imerode(I_binary,se);
-    % imshow(I_eroded);
-    % title("Erosion")
+
 
     I_open = bwareaopen(I_eroded, 300);
-    % imshow(I_open);
-    % title("Open")
-
     %Dilation
     se = strel("disk",4);
     I_dilated = imdilate(I_open,se);
-    % imshow(I_dilated);
-    % title("Dilation")
 
     %SKELETON
     I_skeleton = bwskel(I_dilated,'MinBranchLength',3);
-    % imshow(I_skeleton);
-    % title("skeleton")
 
     count = bwconncomp(I_skeleton,8);
     props = regionprops(count, 'Image');
@@ -78,13 +60,6 @@ function a=extractDigits(I)
         a(1,:) = FeatureExtraction(I1);
         a(2,:) = FeatureExtraction(I2);
         a(3,:) = FeatureExtraction(I3);
-        % figure;
-        % subplot(1,3,1);
-        % imshow(d1);
-        % subplot(1,3,2);
-        % imshow(d2);
-        % subplot(1,3,3);
-        % imshow(d3);
        
     elseif count.NumObjects == 2
         [h1,w1] = size(props(1).Image);
@@ -103,46 +78,19 @@ function a=extractDigits(I)
         a(1,:) = FeatureExtraction(I1);
         a(2,:) = FeatureExtraction(I2);
         a(3,:) = FeatureExtraction(I3);
-        
-        % figure;
-        % subplot(1,3,1);
-        % imshow(d1);
-        % subplot(1,3,2);
-        % imshow(d2);
-        % subplot(1,3,3);
-        % imshow(d3);
 
     elseif count.NumObjects == 3
         a(1,:) = FeatureExtraction(props(1).Image);
         a(2,:) = FeatureExtraction(props(2).Image);
         a(3,:) = FeatureExtraction(props(3).Image);
-        % figure;
-        % subplot(1,3,1);
-        % imshow(props(1).Image);
-        % subplot(1,3,2);
-        % imshow(props(2).Image);
-        % subplot(1,3,3);
-        % imshow(props(3).Image);
+
    elseif count.NumObjects == 4 %some captchas detect 4 digits. can be skipped
         a(1,:) = FeatureExtraction(props(1).Image);
         a(2,:) = FeatureExtraction(props(2).Image);
         a(3,:) = FeatureExtraction(props(3).Image);
 
-        % figure;
-        % subplot(1,4,1);
-        % imshow(props(1).Image);
-        % subplot(1,4,2);
-        % imshow(props(2).Image);
-        % subplot(1,4,3);
-        % imshow(props(3).Image);
-        % subplot(1,4,4);
-        % imshow(props(4).Image);
         
     end
-    % fts={'Area','Perimeter'}; % List of features we wish to compute
-    % 
-	% Ft=regionprops('Table',d1,fts{:}); % Extract the features from a BW image (e.g., from imbinarize(...))
-	% [~,idx]=max(Ft.Area); % Region with largest Area
-	% F=[Ft(idx,:).Variables]; % Only using the one region with largest Area
+
 end
 
