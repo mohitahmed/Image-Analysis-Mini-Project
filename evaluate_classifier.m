@@ -28,12 +28,5 @@ for n = threshold+1:length(data)
 end
 fprintf('\n\nAccuracy: \n');
 fprintf('%f\n\n',mean(sum(abs(test_labels - my_labels),2)==0)*100);
-
-count=0;
-for i=1:length(test_labels)
-    if test_labels(i,:)==my_labels(i,:)
-        count=count+1;
-    end 
-end
-count/length(test_labels)
+toc
 

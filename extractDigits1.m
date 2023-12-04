@@ -24,33 +24,41 @@ function a=extractDigits1(I)
     end 
     
     magnitude = log(abs(fftshifted) + 1);
+    % imshow(magnitude, []);
+    % title("Result Magnitude")
     
     ifftshifted = ifftshift(fftshifted);
     res = uint8(ifft2(ifftshifted));
+    res = imadjust( res);
 
-    res = imgaussfilt(res,3);
+    res= imresize(res, 0.7);
+
+    res =imgaussfilt(res,1.5);
+    %res=histeq(res)
+    res = imresize(res , 0.9);
 
     %Binarization
     I_binary = imbinarize(res);
+
     I_binary = ~I_binary;
-    
-    
-    %Erosion
-    se = strel("diamond",4);
+
+    se = strel("diamond",3);
     I_eroded = imerode(I_binary,se);
+
+    se = strel("diamond",2);
+    I_eroded = imdilate(I_eroded,se);
 
 
     I_open = bwareaopen(I_eroded, 300);
-    %Dilation
-    se = strel("disk",4);
-    I_dilated = imdilate(I_open,se);
 
-    %SKELETON
-    I_skeleton = bwskel(I_dilated,'MinBranchLength',3);
+
+    %Dilation
+
+    I_skeleton = bwskel(I_open ,'MinBranchLength',4);
 
     count = bwconncomp(I_skeleton,8);
     props = regionprops(count, 'Image');
-
+    
     if count.NumObjects == 1
         [h,w] = size(props(1).Image);
         split = round(w/3);

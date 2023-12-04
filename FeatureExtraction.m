@@ -1,12 +1,11 @@
 function F=FeatureExtraction(I)
 % Compute a row-vector of feature values for an image I
 
-
     %I2 = bwskel(I,'MinBranchLength',4);
     F2 = ShapeFeats(I);
     F3=hu_moments(I);
 
-    F=[F2 F3];
+    F=[ F2 F3];
     F =  normalize(F, "scale");
 end
 
