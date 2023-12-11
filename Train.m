@@ -23,7 +23,7 @@ end
 
 fprintf('Model training...\n');
 
-tr = templateTree('MaxNumSplits',90);
+tr = templateTree('MaxNumSplits',100);
 model = fitcensemble(train_patterns, train_labels, 'Learners',tr); 
 save model;
 
